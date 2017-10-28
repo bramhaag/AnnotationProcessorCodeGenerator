@@ -1,4 +1,4 @@
-package me.bramhaag.annotationtest._old.api;
+package me.bramhaag.annotationtest.api.util;
 
 import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.tree.JCTree;

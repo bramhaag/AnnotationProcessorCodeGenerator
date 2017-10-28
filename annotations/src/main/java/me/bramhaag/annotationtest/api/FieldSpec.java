@@ -1,29 +1,51 @@
 package me.bramhaag.annotationtest.api;
 
+import com.sun.tools.javac.model.JavacElements;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.util.List;
 import me.bramhaag.annotationtest.api.util.Modifier;
+import me.bramhaag.annotationtest.api.util.TypeUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-public class FieldSpec extends AbstractSpec {
+public class FieldSpec implements ISpec {
+
+    private String name;
+
+    private Modifier[] modifiers;
+    private Class<?>[] annotations;
 
     private Class<?> type;
     private Object value;
 
     private FieldSpec(Class<?> type, String name, Object value, Modifier[] modifiers, Class<?>[] annotations) {
-        super(name, modifiers, annotations);
+        this.name = name;
+        this.modifiers = modifiers;
+        this.annotations = annotations;
 
         this.type = type;
         this.value = value;
     }
 
-    public Class<?> getType() {
-        return type;
-    }
+    @Override
+    public JCTree createTree(Context context) {
+        TreeMaker treeMaker = TreeMaker.instance(context);
+        JavacElements elements = JavacElements.instance(context);
 
-    public Object getValue() {
-        return value;
+        long flags = Arrays.stream(this.modifiers)
+                .mapToLong(Modifier::getValue)
+                .reduce(0, (a, b) -> a | b);
+
+        List<JCTree.JCAnnotation> annotations = List.from(Arrays.stream(this.annotations)
+                .map(a -> treeMaker.Annotation(TypeUtil.getType(a, treeMaker, elements), com.sun.tools.javac.util.List.nil()))
+                .toArray(JCTree.JCAnnotation[]::new));
+
+        JCTree.JCModifiers modifiers = treeMaker.Modifiers(flags, annotations);
+
+        return treeMaker.VarDef(modifiers, elements.getName(name), TypeUtil.getType(type, treeMaker, elements), treeMaker.Literal(value));
     }
 
     public static class Builder {
@@ -31,8 +53,8 @@ public class FieldSpec extends AbstractSpec {
         private String name;
         private Object value;
 
-        private List<Modifier> modifiers = new ArrayList<>();
-        private List<Class<?>> annotations = new ArrayList<>();
+        private java.util.List<Modifier> modifiers = new ArrayList<>();
+        private java.util.List<Class<?>> annotations = new ArrayList<>();
 
         public Builder(Class<?> type, String name) {
             this.type = type;
