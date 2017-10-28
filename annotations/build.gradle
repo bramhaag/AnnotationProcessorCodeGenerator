@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+version '1'
+
+sourceCompatibility = 1.8
+targetCompatibility = sourceCompatibility
+
+repositories {
+    mavenCentral()
+}
+
+//tasks.withType(JavaCompile) {
+//    doFirst {
+//        options.compilerArgs = [
+//                '--add-exports', 'jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+//                '--add-exports', 'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+//        ]
+//    }
+//}
+
+dependencies {
+    compile 'com.google.auto.service:auto-service:1.0-rc3'
+    compile 'com.github.javaparser:javaparser-core:3.4.3'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
