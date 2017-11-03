@@ -1,6 +1,9 @@
 package me.bramhaag.annotationtest.api;
 
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Symtab;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -10,6 +13,7 @@ import com.sun.tools.javac.util.Name;
 import me.bramhaag.annotationtest.api.util.Modifier;
 import me.bramhaag.annotationtest.api.util.ParserUtil;
 import me.bramhaag.annotationtest.api.util.TypeUtil;
+import sun.reflect.generics.tree.Tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,9 +49,49 @@ public class MethodSpec implements ISpec {
     }
 
     @Override
-    public JCTree createTree(Context context) {
-        TreeMaker treeMaker = TreeMaker.instance(context);
+    public JCTree createTree(Context context, JCTree.JCClassDecl classDecl) {
+        TreeMaker treeMaker = TreeMaker.instance(context).at(classDecl.pos());
         JavacElements elements = JavacElements.instance(context);
+        Symtab symtab = Symtab.instance(context);
+
+//        long flags = Arrays.stream(modifiers)
+//            .mapToLong(Modifier::getValue)
+//            .reduce(0, (a, b) -> a | b);
+//
+//        Symbol.MethodSymbol methodSym = new Symbol.MethodSymbol(flags,
+//                elements.getName(name),
+//                new Type.MethodType(List.of(symtab.stringType), symtab.stringType, List.nil(), symtab.methodClass),
+//                classDecl.sym);
+//
+//        java.util.List<String> statements = this.statements.entrySet()
+//            .stream()
+//            .map(e -> parseStatement(e.getKey(), e.getValue()))
+//            .collect(Collectors.toList());
+//
+//        StringBuilder methodBuilder = new StringBuilder();
+//        methodBuilder.append('{');
+//        statements.forEach(methodBuilder::append);
+//        methodBuilder.append('}');
+//
+//        JCTree.JCBlock methodBody = ParserUtil.newParser(context, methodBuilder.toString()).block();
+//
+//        JCTree.JCMethodDecl methodDecl = treeMaker.MethodDef(methodSym, methodBody);
+//
+//        methodDecl.params.forEach(p -> System.out.println("Found param: " + p.name));
+//        methodDecl.params.forEach(p -> p.sym.adr = 0);
+//        //methodDecl.params = List.nil();
+//
+//        this.parameters.entrySet().stream()
+//                .map(e -> treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), elements.getName(e.getKey()), TypeUtil.getType(e.getValue(), treeMaker, elements), null))
+//                .forEach(p -> {
+//                    p.sym = new Symbol.VarSymbol(Flags.PARAMETER, p.name, p.type, methodSym);
+//                    p.sym.name = p.name;
+//                    p.sym.adr = 0;
+//                });
+//
+//        classDecl.sym.members_field.enter(methodDecl.sym);
+//
+//        return methodDecl;
 
         java.util.List<String> statements = this.statements.entrySet()
                 .stream()
@@ -86,7 +130,9 @@ public class MethodSpec implements ISpec {
                 .map(c -> ParserUtil.newParser(context, c.getName()).parseType())
                 .toArray(JCTree.JCExpression[]::new));
 
-        return treeMaker.MethodDef(modifiers, methodName, returnType, genericParameters, parameters, throwables, methodBody, null);
+        JCTree.JCMethodDecl methodDecl = treeMaker.MethodDef(modifiers, methodName, returnType, genericParameters, parameters, throwables, methodBody, null);
+        methodDecl.params.forEach(p -> System.out.println("Found param: " + p.name));
+        return methodDecl;
     }
 
     private String parseStatement(String statement, Queue<Object> args) {

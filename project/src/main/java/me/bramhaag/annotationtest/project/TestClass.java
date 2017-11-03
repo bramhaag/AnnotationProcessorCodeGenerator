@@ -16,6 +16,6 @@ public class TestClass {
     public static void main(String[] args) {
         //Arrays.stream(TestClass.class.getDeclaredMethods()).map(Method::toString).forEach(System.out::println);
 
-        test();
+        test("hello");
     }
 }

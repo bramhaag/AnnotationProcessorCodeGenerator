@@ -28,6 +28,11 @@ public class TypeUtil {
     }
 
     private static JCTree.JCExpression getTypeClass(Class<?> clazz, TreeMaker treeMaker, JavacElements elements) {
+        if(clazz.isPrimitive()) {
+            //TODO
+            return null;
+        }
+
         String[] arr = clazz.getName().split("\\.");
         JCTree.JCExpression expr = treeMaker.Ident(elements.getName(arr[0]));
 

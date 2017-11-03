@@ -31,7 +31,7 @@ public class FieldSpec implements ISpec {
     }
 
     @Override
-    public JCTree createTree(Context context) {
+    public JCTree createTree(Context context, JCTree.JCClassDecl classDecl) {
         TreeMaker treeMaker = TreeMaker.instance(context);
         JavacElements elements = JavacElements.instance(context);
 

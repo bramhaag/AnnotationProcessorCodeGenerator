@@ -2,6 +2,7 @@ package me.bramhaag.annotationtest.api;
 
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import sun.reflect.generics.tree.Tree;
 
 public interface ISpec {
 
@@ -28,5 +29,5 @@ public interface ISpec {
 //        return annotations;
 //    }
 
-    JCTree createTree(Context context);
+    JCTree createTree(Context context, JCTree.JCClassDecl classDecl);
 }

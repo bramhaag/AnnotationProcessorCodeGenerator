@@ -50,18 +50,19 @@ public class TestTreeTranslator extends TreeTranslator {
 
             MethodSpec method = new MethodSpec.Builder("test")
                     .setReturnType(String.class)
+                    .addParameter(String.class, "myParam")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addStatement("System.out.println($L)", "Running test method!")
                     .addStatement("System.out.println($L-$L)", 1L, 10L)
                     .addStatement("return new $L($L)", String.class, "Hello!")
                     .build();
 
-            FieldSpec field = new FieldSpec.Builder(String.class,"testField")
-                    .addModifiers(Modifier.PUBLIC)
-                    .setValue("this is a test")
-                    .build();
+//            FieldSpec field = new FieldSpec.Builder(String.class,"testField")
+//                    .addModifiers(Modifier.PUBLIC)
+//                    .setValue("this is a test")
+//                    .build();
 
-            SpecUtil.addToClass(tree, context, method, field);
+            SpecUtil.addToClass(tree, context, method);
 
             System.out.println(((JCTree.JCClassDecl) tree).defs);
         }
